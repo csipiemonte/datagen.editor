@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30ModelWizardID"
+            name="%_UI_erdesignerschema30ModelWizard_label"
+            class="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30ModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/erdesignerschema30ModelFile.gif">
+         <description>%_UI_erdesignerschema30ModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <editor
+            id="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30EditorID"
+            name="%_UI_erdesignerschema30Editor_label"
+            icon="icons/full/obj16/erdesignerschema30ModelFile.gif"
+            extensions="erdesignerschema30"
+            class="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30Editor"
+            contributorClass="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30ActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>
