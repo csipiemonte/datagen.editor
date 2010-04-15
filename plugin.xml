@@ -25,14 +25,77 @@
       </wizard>
    </extension>
 
-   <extension point="org.eclipse.ui.editors">
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="datagen.editor.newwizards"
+            name="Datagen wizards">
+      </category>
+      <wizard
+            category="datagen.editor.newwizards"
+            class="it.csi.mddtools.datagen.presentation.DatagenModelWizard"
+            icon="icons/full/obj16/DatagenModelFile.gif"
+            id="it.csi.mddtools.datagen.presentation.DatagenModelWizardID"
+            name="%_UI_DatagenModelWizard_label">
+         <description>
+            %_UI_DatagenModelWizard_description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="datagen.editor.newwizards"
+            name="Datagen wizards">
+      </category>
+      <wizard
+            category="datagen.editor.newwizards"
+            class="it.csi.mddtools.rdbmdl.presentation.RdbmdlModelWizard"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            id="it.csi.mddtools.rdbmdl.presentation.RdbmdlModelWizardID"
+            name="%_UI_RdbmdlModelWizard_label">
+         <description>
+            %_UI_RdbmdlModelWizard_description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
       <editor
-            id="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30EditorID"
-            name="%_UI_erdesignerschema30Editor_label"
-            icon="icons/full/obj16/erdesignerschema30ModelFile.gif"
-            extensions="erdesignerschema30"
+            class="it.csi.mddtools.datagen.presentation.DatagenEditor"
+            contributorClass="it.csi.mddtools.datagen.presentation.DatagenActionBarContributor"
+            extensions="datagen"
+            icon="icons/full/obj16/DatagenModelFile.gif"
+            id="it.csi.mddtools.datagen.presentation.DatagenEditorID"
+            name="%_UI_DatagenEditor_label">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="it.csi.mddtools.rdbmdl.presentation.RdbmdlEditor"
+            contributorClass="it.csi.mddtools.rdbmdl.presentation.RdbmdlActionBarContributor"
+            extensions="rdbmdl"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            id="it.csi.mddtools.rdbmdl.presentation.RdbmdlEditorID"
+            name="%_UI_RdbmdlEditor_label">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
             class="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30Editor"
-            contributorClass="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30ActionBarContributor">
+            contributorClass="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30ActionBarContributor"
+            extensions="erdesignerschema30"
+            icon="icons/full/obj16/erdesignerschema30ModelFile.gif"
+            id="it.csi.mddtools.datagen.Erdesignerschema30.presentation.erdesignerschema30EditorID"
+            name="%_UI_erdesignerschema30Editor_label">
       </editor>
    </extension>
 
