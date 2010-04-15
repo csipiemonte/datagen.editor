@@ -187,20 +187,22 @@ public class RdbmdlModelWizard extends Wizard implements INewWizard {
 	 * Returns the names of the types that can be created as the root object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	protected Collection<String> getInitialObjectNames() {
 		if (initialObjectNames == null) {
 			initialObjectNames = new ArrayList<String>();
-			for (EClassifier eClassifier : rdbmdlPackage.getEClassifiers()) {
-				if (eClassifier instanceof EClass) {
-					EClass eClass = (EClass)eClassifier;
-					if (!eClass.isAbstract()) {
-						initialObjectNames.add(eClass.getName());
-					}
-				}
-			}
-			Collections.sort(initialObjectNames, CommonPlugin.INSTANCE.getComparator());
+			
+			initialObjectNames.add(rdbmdlPackage.getSchema().getName());
+//			for (EClassifier eClassifier : rdbmdlPackage.getEClassifiers()) {
+//				if (eClassifier instanceof EClass) {
+//					EClass eClass = (EClass)eClassifier;
+//					if (!eClass.isAbstract()) {
+//						initialObjectNames.add(eClass.getName());
+//					}
+//				}
+//			}
+//			Collections.sort(initialObjectNames, CommonPlugin.INSTANCE.getComparator());
 		}
 		return initialObjectNames;
 	}
