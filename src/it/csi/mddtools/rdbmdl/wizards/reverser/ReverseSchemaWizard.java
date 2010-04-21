@@ -73,10 +73,12 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 		final String fileName = page.getFileName();
 		final String jdbcUrl = page.getJdbcUrl();
 		final String schemaName = page.getSchemaName();
+		final String username = page.getUsernameText();
+		final String password = page.getPasswordText();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, fileName, jdbcUrl, schemaName, monitor);
+					doFinish(containerName, fileName, jdbcUrl, username, password, schemaName, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -97,13 +99,15 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 	}
 	
 	
-	private Schema getModelObject(String jdbcUrl, String schemaName) throws CoreException{
-		RdbmdlFactory fact = RdbmdlFactory.eINSTANCE; 
-		Schema schema = fact.createSchema();
-		Table tab1 = fact.createTable();
-		tab1.setName("XXXXX");
-		schema.getElements().add(tab1);
-		return schema;
+	private Schema getModelObject(String jdbcUrl, String schemaName, String username, String password) throws CoreException{
+		RdbmdlFactory fact = RdbmdlFactory.eINSTANCE;
+		
+		/*
+		 * creazione schema da metadati db
+		 */
+		ReverseSchemaMetaData metaData = new ReverseSchemaMetaData();
+		return metaData.createSchema(fact, jdbcUrl, schemaName, username, password);
+
 	}
 	
 	
@@ -113,14 +117,16 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 	 * The worker method. It will find the container, create the
 	 * file if missing or just replace its contents, and open
 	 * the editor on the newly created file.
+	 * @param schemaName 
+	 * @param password 
 	 */
 
 	private void doFinish(
 		String containerName,
 		String fileName,
 		String jdbcUrl,
-		String schemaName,
-		IProgressMonitor monitor)
+		String username,
+		String password, String schemaName, IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
 		monitor.beginTask("Creating " + fileName, 2);
@@ -150,7 +156,7 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 
 		// Add the initial model object to the contents.
 		//
-		EObject rootObject = getModelObject(jdbcUrl, schemaName);
+		EObject rootObject = getModelObject(jdbcUrl, schemaName, username, password);
 		if (rootObject != null) {
 			emfResource.getContents().add(rootObject);
 		}

@@ -37,6 +37,9 @@ public class ReverseSchemaWizardPage extends WizardPage {
 	private Text schemaNameText;
 	
 	private ISelection selection;
+	
+	private Text usernameText;
+	private Text passwordText;
 
 	/**
 	 * Constructor for SampleNewWizardPage.
@@ -100,6 +103,36 @@ public class ReverseSchemaWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jdbcUrl.setLayoutData(gd);
 		jdbcUrl.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		});
+
+		label = new Label(container, SWT.NULL);
+		label.setText("");
+		
+		label = new Label(container, SWT.NULL);
+		label.setText("&Username:");
+
+		usernameText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		usernameText.setLayoutData(gd);
+		usernameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		});
+
+		label = new Label(container, SWT.NULL);
+		label.setText("");
+		
+		label = new Label(container, SWT.NULL);
+		label.setText("&Password:");
+
+		passwordText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		passwordText.setLayoutData(gd);
+		passwordText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
@@ -212,6 +245,15 @@ public class ReverseSchemaWizardPage extends WizardPage {
 			updateStatus("Schema name must be specified");
 			return;
 		}
+		if (getUsernameText().length() == 0) {
+			updateStatus("Username must be specified");
+			return;
+		}
+		if (getPasswordText().length() == 0) {
+			updateStatus("Password must be specified");
+			return;
+		}
+		
 		updateStatus(null);
 	}
 
@@ -235,6 +277,13 @@ public class ReverseSchemaWizardPage extends WizardPage {
 	public String getSchemaName() {
 		return schemaNameText.getText();
 	}
-	
+
+	public String getUsernameText() {
+		return usernameText.getText();
+	}
+
+	public String getPasswordText() {
+		return passwordText.getText();
+	}	
 	
 }
