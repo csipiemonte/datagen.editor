@@ -64,6 +64,13 @@
                class="org.eclipse.core.resources.IResource">
          </selection>
       </wizard>
+      <wizard
+            category="datagen.editor.newwizards"
+            class="it.csi.mddtools.rdbmdl.wizards.reverser.ReverseSchemaWizard"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            id="it.csi.mddtools.rdbmdl.wizards.reverser.ReverseSchemaWizard"
+            name="RDB Schema Reverse engineering">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
