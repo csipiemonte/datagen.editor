@@ -121,10 +121,10 @@ public class ReverseSchemaMetaData {
 	 */
 	private PrimitiveDataType setPrimitiveDataType(ResultSet rsColumns) throws SQLException {
 		PrimitiveDataType dataType = DatatypesFactory.eINSTANCE.createPrimitiveDataType();
-		dataType.setDecimalDigits(rsColumns.getInt("DECIMAL_DIGITS "));
-		dataType.setName(rsColumns.getString("TYPE_NAME "));
+		dataType.setDecimalDigits(rsColumns.getInt("DECIMAL_DIGITS"));
+		dataType.setName(rsColumns.getString("TYPE_NAME"));
 		dataType.setNullable(rsColumns.getInt("NULLABLE") == 0 ? false:true);
-		dataType.setSize(rsColumns.getInt("COLUMN_SIZE "));
+		dataType.setSize(rsColumns.getInt("COLUMN_SIZE"));
 		dataType.setType(PrimitiveTypeCodes.get(rsColumns.getShort("DATA_TYPE")));
 		return dataType;
 	}
@@ -145,7 +145,7 @@ public class ReverseSchemaMetaData {
 		
 		ResultSet pk = dmd.getPrimaryKeys(null, null, tableName);
 		while (pk.next()) {
-			addColumnToPk(tab, pk.getString("COLUMN_NAME "), primaryKey);
+			addColumnToPk(tab, pk.getString("COLUMN_NAME"), primaryKey);
 			
 		}
 		return primaryKey;
