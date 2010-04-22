@@ -97,17 +97,22 @@ public class ReverseSchemaMetaData {
 
 		Table tab = fact.createTable();
 		tab.setName(tableName);
+		tab.setUid("tb_"+tableName);
 		
 		ResultSet rsColumns = dmd.getColumns(null, null, tableName, null);
 		while (rsColumns.next()) {
 			TableColumn col = fact.createTableColumn();
 			col.setName(rsColumns.getString("COLUMN_NAME"));
 		    col.setType(setPrimitiveDataType(rsColumns));
+		    col.setUid("col_"+tableName+"_"+rsColumns.getString("COLUMN_NAME"));
 
 			tab.getColumns().add(col);
 		}
 		
-		tab.setPrimaryKey(createPrimaryKey(dmd, tableName, tab));
+		PrimaryKey pk = createPrimaryKey(dmd, tableName, tab);
+		if(pk != null){
+			tab.setPrimaryKey(pk);
+		}
 
 		schema.getElements().add(tab);
 
@@ -141,14 +146,21 @@ public class ReverseSchemaMetaData {
 			String tableName, Table tab) throws SQLException {
 		
 		PrimaryKey primaryKey = ConstraintsFactory.eINSTANCE.createPrimaryKey();
+		primaryKey.setUid("pk_"+tableName);
+		primaryKey.setName("pk_"+tableName);
 		
-		
+		boolean flag = false;
 		ResultSet pk = dmd.getPrimaryKeys(null, null, tableName);
 		while (pk.next()) {
 			addColumnToPk(tab, pk.getString("COLUMN_NAME"), primaryKey);
-			
+			flag = true;
 		}
-		return primaryKey;
+		
+		if(flag){
+			return primaryKey;
+		}
+		
+		return null;
 	}
 
 	/**
@@ -162,7 +174,7 @@ public class ReverseSchemaMetaData {
 		List<TableColumn> listaColonne = tab.getColumns();
 		for (TableColumn tableColumn : listaColonne) {
 			if(tableColumn.getName().equalsIgnoreCase(columnName)){
-				
+				tableColumn.setIsPrimaryKey(true);
 				primaryKey.getIncludedColumns().add(tableColumn);
 				return;
 			}
