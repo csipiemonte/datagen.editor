@@ -30,7 +30,7 @@ public class ReverseSchemaMetaData {
 			String schemaName, String username, String password) {
 
 		Schema schema = fact.createSchema();
-
+		schema.setName(schemaName);
 		// Connection reference
 		Connection conn = null;
 
