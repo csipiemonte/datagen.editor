@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="datagen.editor.newwizards"
+            name="Datagen wizards">
+      </category>
+      <wizard
+            category="datagen.editor.newwizards"
+            class="it.csi.mddtools.datagen.presentation.DatagenModelWizard"
+            icon="icons/full/obj16/DatagenModelFile.gif"
+            id="it.csi.mddtools.datagen.presentation.DatagenModelWizardID"
+            name="%_UI_DatagenModelWizard_label">
+         <description>
+            %_UI_DatagenModelWizard_description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="datagen.editor.newwizards"
+            name="Datagen wizards">
+      </category>
+      <wizard
+            category="datagen.editor.newwizards"
+            class="it.csi.mddtools.rdbmdl.presentation.RdbmdlModelWizard"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            id="it.csi.mddtools.rdbmdl.presentation.RdbmdlModelWizardID"
+            name="%_UI_RdbmdlModelWizard_label">
+         <description>
+            %_UI_RdbmdlModelWizard_description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+      <wizard
+            category="datagen.editor.newwizards"
+            class="it.csi.mddtools.rdbmdl.wizards.reverser.ReverseSchemaWizard"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            id="it.csi.mddtools.rdbmdl.wizards.reverser.ReverseSchemaWizard"
+            name="RDB Schema Reverse engineering">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="it.csi.mddtools.datagen.presentation.DatagenEditor"
+            contributorClass="it.csi.mddtools.datagen.presentation.DatagenActionBarContributor"
+            extensions="datagen"
+            icon="icons/full/obj16/DatagenModelFile.gif"
+            id="it.csi.mddtools.datagen.presentation.DatagenEditorID"
+            name="%_UI_DatagenEditor_label">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="it.csi.mddtools.rdbmdl.presentation.RdbmdlEditor"
+            contributorClass="it.csi.mddtools.rdbmdl.presentation.RdbmdlActionBarContributor"
+            extensions="rdbmdl"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            id="it.csi.mddtools.rdbmdl.presentation.RdbmdlEditorID"
+            name="%_UI_RdbmdlEditor_label">
+      </editor>
+   </extension>
+
+</plugin>
