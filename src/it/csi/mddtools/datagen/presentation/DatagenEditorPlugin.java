@@ -6,7 +6,12 @@
  */
 package it.csi.mddtools.datagen.presentation;
 
+import java.util.Properties;
+
 import it.csi.mddtools.rdbmdl.provider.RdbmdlEditPlugin;
+
+import mddtools.usagetracking.ProfilingPacketBuilder;
+import mddtools.usagetracking.TrackingSender;
 
 import org.eclipse.emf.common.EMFPlugin;
 
@@ -77,14 +82,14 @@ public final class DatagenEditorPlugin extends EMFPlugin {
 	 * The actual implementation of the Eclipse <b>Plugin</b>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public static class Implementation extends EclipseUIPlugin {
 		/**
 		 * Creates an instance.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @generated
+		 * @generated NOT
 		 */
 		public Implementation() {
 			super();
@@ -92,6 +97,28 @@ public final class DatagenEditorPlugin extends EMFPlugin {
 			// Remember the static instance.
 			//
 			plugin = this;
+			
+			manageTracking();
+		}
+		
+		private static final String PLUGIN_NAME = "datagen";
+		private static final String PLUGIN_VERSION = "1.0.0.007";
+		
+		/**
+		 * @generated NOT
+		 */
+		public static void manageTracking(){
+			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(PLUGIN_NAME, PLUGIN_VERSION);
+			packet.list(System.out);
+			String whoName = packet.getProperty(ProfilingPacketBuilder.P_WHO_NAME);
+			if (whoName == null || whoName.length()==0){
+				//ask for registration
+				// TODO
+				System.out.println("ask for registration");
+			}
+			else{
+				TrackingSender.sendTrackingInfo(packet);
+			}
 		}
 	}
 

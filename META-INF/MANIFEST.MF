@@ -22,5 +22,7 @@ Require-Bundle: org.eclipse.core.runtime,
  datagen;bundle-version="1.0.0",
  org.eclipse.ui,
  org.eclipse.emf.cdo;bundle-version="2.0.0",
- oracle.database.driver.jdk14;bundle-version="10.2.0"
+ oracle.database.driver.jdk14;bundle-version="10.2.0",
+ mddtools;bundle-version="1.1.0"
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: it.csi.mddtools.datagen.presentation.DatagenEditorPlugin$Implementation
