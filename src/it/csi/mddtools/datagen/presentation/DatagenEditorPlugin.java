@@ -102,7 +102,7 @@ public final class DatagenEditorPlugin extends EMFPlugin {
 		}
 		
 		private static final String PLUGIN_NAME = "datagen";
-		private static final String PLUGIN_VERSION = "1.0.0.007";
+		private static final String PLUGIN_VERSION = "1.0.0.010";
 		
 		/**
 		 * @generated NOT
