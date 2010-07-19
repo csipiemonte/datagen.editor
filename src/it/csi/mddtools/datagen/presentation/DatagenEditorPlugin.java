@@ -8,6 +8,7 @@ package it.csi.mddtools.datagen.presentation;
 
 import java.util.Properties;
 
+import it.csi.mddtools.datagen.genutils.MiscUtils;
 import it.csi.mddtools.rdbmdl.provider.RdbmdlEditPlugin;
 
 import mddtools.usagetracking.ProfilingPacketBuilder;
@@ -101,14 +102,12 @@ public final class DatagenEditorPlugin extends EMFPlugin {
 			manageTracking();
 		}
 		
-		private static final String PLUGIN_NAME = "datagen";
-		private static final String PLUGIN_VERSION = "1.0.0.010";
 		
 		/**
 		 * @generated NOT
 		 */
 		public static void manageTracking(){
-			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(PLUGIN_NAME, PLUGIN_VERSION);
+			Properties packet = mddtools.usagetracking.ProfilingPacketBuilder.packStartupInfo(MiscUtils.getPluginName(), MiscUtils.getPluginVersion());
 			packet.list(System.out);
 			String whoName = packet.getProperty(ProfilingPacketBuilder.P_WHO_NAME);
 			if (whoName == null || whoName.length()==0){
