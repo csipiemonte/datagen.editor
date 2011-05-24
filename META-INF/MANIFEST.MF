@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: datagen.editor;singleton:=true
-Bundle-Version: 1.0.2.001
+Bundle-Version: 1.0.2.002
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -23,6 +23,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.emf.cdo;bundle-version="2.0.0",
  mddtools;bundle-version="1.1.0",
- oracle.database.driver.jdk14;bundle-version="10.2.0"
+ datagen.jdbcbridge.oracle;bundle-version="1.0.0",
+ datagen.jdbcbridge.postgres;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: it.csi.mddtools.datagen.presentation.DatagenEditorPlugin$Implementation
