@@ -75,10 +75,11 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 		final String schemaName = page.getSchemaName();
 		final String username = page.getUsernameText();
 		final String password = page.getPasswordText();
+		final String dbmsType = page.getDbmsType();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, fileName, jdbcUrl, username, password, schemaName, monitor);
+					doFinish(containerName, fileName, dbmsType, jdbcUrl, username, password, schemaName, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -99,15 +100,22 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 	}
 	
 	
-	private Schema getModelObject(String jdbcUrl, String schemaName, String username, String password) throws CoreException{
+	private Schema getModelObject(String dbmsType, String jdbcUrl, String schemaName, String username, String password) throws CoreException{
 		RdbmdlFactory fact = RdbmdlFactory.eINSTANCE;
 		
 		/*
 		 * creazione schema da metadati db
 		 */
-		ReverseSchemaMetaData metaData = new ReverseSchemaMetaData();
-		return metaData.createSchema(fact, jdbcUrl, schemaName, username, password);
-
+		if ("ORACLE".equals(dbmsType)){
+			ReverseSchemaMetaData metaData = new ReverseSchemaMetaData();
+			return metaData.createSchema(fact, jdbcUrl, schemaName, username, password);
+		}
+		else if ("POSTGRESQL".equals(dbmsType)){
+			PostgresReverser reverser = new PostgresReverser();
+			return reverser.createSchema(fact, jdbcUrl, schemaName, username, password);
+		}
+		else 
+			throw new IllegalArgumentException("tipo DB "+dbmsType+" non gestito");
 	}
 	
 	
@@ -124,6 +132,7 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 	private void doFinish(
 		String containerName,
 		String fileName,
+		String dbmsType,
 		String jdbcUrl,
 		String username,
 		String password, String schemaName, IProgressMonitor monitor)
@@ -156,7 +165,7 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 
 		// Add the initial model object to the contents.
 		//
-		EObject rootObject = getModelObject(jdbcUrl, schemaName, username, password);
+		EObject rootObject = getModelObject(dbmsType, jdbcUrl, schemaName, username, password);
 		if (rootObject != null) {
 			emfResource.getContents().add(rootObject);
 		}

@@ -13,9 +13,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -31,6 +33,8 @@ public class ReverseSchemaWizardPage extends WizardPage {
 	private Text containerText;
 
 	private Text fileText;
+	
+	private Combo dbmsType;
 	
 	private Text jdbcUrl;
 
@@ -92,6 +96,36 @@ public class ReverseSchemaWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});
+		
+		label = new Label(container, SWT.NULL);
+		label.setText("");
+	
+		
+		label = new Label(container, SWT.NULL);
+		label.setText("&Dbms:");
+
+		dbmsType = new Combo(container, SWT.NULL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		dbmsType.setLayoutData(gd);
+		dbmsType.setItems(new String[]{"ORACLE", "POSTGRESQL"});
+		dbmsType.addSelectionListener(new SelectionListener() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				initJdbcUrlTemplate(dbmsType.getText());
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {
+				initJdbcUrlTemplate(dbmsType.getText());
+			}
+			
+			private void initJdbcUrlTemplate(String dbmsTypeName){
+				if ("ORACLE".equals(dbmsTypeName))
+					jdbcUrl.setText("jdbc:oracle:thin:@[server]:[port]:[sid]");
+				else if ("POSTGRESQL".equals(dbmsTypeName))
+					jdbcUrl.setText(" jdbc:postgresql://[host]:[port]/[database]?user=[userName]&password=[pass]");
+			}
+		});
+		
 		
 		label = new Label(container, SWT.NULL);
 		label.setText("");
@@ -237,6 +271,10 @@ public class ReverseSchemaWizardPage extends WizardPage {
 				return;
 			}
 		}
+		if (getDbmsType() == null || getDbmsType().length()==0){
+			updateStatus("DMBS type must be specified");
+			return;
+		}
 		if (getJdbcUrl().length() == 0) {
 			updateStatus("JDBC connection url must be specified");
 			return;
@@ -268,6 +306,10 @@ public class ReverseSchemaWizardPage extends WizardPage {
 
 	public String getFileName() {
 		return fileText.getText();
+	}
+
+	public String getDbmsType(){
+		return dbmsType.getText();
 	}
 	
 	public String getJdbcUrl() {
