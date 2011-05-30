@@ -5,16 +5,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 
-
-public class PostgresReverser extends AbstractReverser{
+public class OracleReverser extends AbstractReverser{
 
 
 	@Override
 	public Connection getConnection(String jdbcUrl, String username,
 			String password) throws SQLException {
 		// Load database driver
-		DriverManager.registerDriver(new org.postgresql.Driver());
-
+		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 		// Make connection
 		Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
 		return conn;

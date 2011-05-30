@@ -107,8 +107,10 @@ public class ReverseSchemaWizard extends Wizard implements INewWizard {
 		 * creazione schema da metadati db
 		 */
 		if ("ORACLE".equals(dbmsType)){
-			ReverseSchemaMetaData metaData = new ReverseSchemaMetaData();
-			return metaData.createSchema(fact, jdbcUrl, schemaName, username, password);
+//			ReverseSchemaMetaData metaData = new ReverseSchemaMetaData();
+//			return metaData.createSchema(fact, jdbcUrl, schemaName, username, password);
+			OracleReverser reverser = new OracleReverser();
+			return reverser.createSchema(fact, jdbcUrl, schemaName, username, password);
 		}
 		else if ("POSTGRESQL".equals(dbmsType)){
 			PostgresReverser reverser = new PostgresReverser();

@@ -1,5 +1,13 @@
 package it.csi.mddtools.rdbmdl.wizards.reverser;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+//import oracle.jdbc.OracleDatabaseMetaData;
 import it.csi.mddtools.rdbmdl.RdbmdlFactory;
 import it.csi.mddtools.rdbmdl.Schema;
 import it.csi.mddtools.rdbmdl.Table;
@@ -10,13 +18,12 @@ import it.csi.mddtools.rdbmdl.datatypes.DatatypesFactory;
 import it.csi.mddtools.rdbmdl.datatypes.PrimitiveDataType;
 import it.csi.mddtools.rdbmdl.datatypes.PrimitiveTypeCodes;
 
-import java.sql.*;
-import java.util.List;
+public abstract class AbstractReverser {
 
-import oracle.jdbc.OracleDatabaseMetaData;
 
-public class ReverseSchemaMetaData {
-
+	public abstract Connection getConnection(String jdbcUrl, String username, String password) throws SQLException;
+	
+	
 	/**
 	 * Create a schema db from oracle metadata
 	 * @param fact
@@ -36,14 +43,11 @@ public class ReverseSchemaMetaData {
 
 		try {
 
-			// Load database driver
-			DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
-
 			// Make connection
-			conn = DriverManager.getConnection(jdbcUrl, username, password);
+			conn = getConnection(jdbcUrl, username, password);
 
 			// Get the database meta data
-			OracleDatabaseMetaData dmd = (OracleDatabaseMetaData) conn
+			DatabaseMetaData dmd = (DatabaseMetaData) conn
 					.getMetaData();
 
 			if (dmd == null) {
@@ -54,7 +58,7 @@ public class ReverseSchemaMetaData {
 				// get all schemas from db
 				ResultSet rs = dmd.getSchemas();
 				ResultSet rs1 = null;
-
+				int i = 0;
 				while (rs.next()) {
 					// load only referenced schema
 					if (rs.getString(1).equalsIgnoreCase(schemaName)) {
@@ -62,10 +66,28 @@ public class ReverseSchemaMetaData {
 						rs1 = dmd.getTables(null, rs.getString(1), "%", null);
 						while (rs1.next()) {
 							// add table or view to schema passing it tablename
-							addTableOrViewToSchema(rs1.getString(3), schema,
-									fact, dmd);
+							String tname = rs1.getString(3);
+							String ttype = rs1.getString(4);
+							if ("TABLE".equalsIgnoreCase(ttype)){
+								addTableOrViewToSchema(tname, schema,
+										fact, dmd);
+							}
+						}
+						try{
+							rs1.close();
+							rs1.getStatement().close();
+						}
+						catch(Exception ce){
+							// NOPc
+							System.out.println("errore nella chiusura del cursore:"+ce);
 						}
 					}
+				}
+				try{
+					rs.close();
+				}
+				catch(Exception ce){
+					// NOP
 				}
 			}
 		} catch (SQLException e) {
@@ -93,7 +115,7 @@ public class ReverseSchemaMetaData {
 	 * @throws SQLException
 	 */
 	private void addTableOrViewToSchema(String tableName, Schema schema,
-			RdbmdlFactory fact, OracleDatabaseMetaData dmd) throws SQLException {
+			RdbmdlFactory fact, DatabaseMetaData dmd) throws SQLException {
 
 		Table tab = fact.createTable();
 		tab.setName(tableName);
@@ -108,7 +130,13 @@ public class ReverseSchemaMetaData {
 
 			tab.getColumns().add(col);
 		}
-		
+		try{
+			rsColumns.close();
+			rsColumns.getStatement().close();
+		}
+		catch(Exception e){
+			System.out.println("errore in chiusura statement");
+		}
 		PrimaryKey pk = createPrimaryKey(dmd, tableName, tab);
 		if(pk != null){
 			tab.setPrimaryKey(pk);
@@ -142,7 +170,7 @@ public class ReverseSchemaMetaData {
 	 * @return PrimaryKey
 	 * @throws SQLException
 	 */
-	private PrimaryKey createPrimaryKey(OracleDatabaseMetaData dmd,
+	private PrimaryKey createPrimaryKey(DatabaseMetaData dmd,
 			String tableName, Table tab) throws SQLException {
 		
 		PrimaryKey primaryKey = ConstraintsFactory.eINSTANCE.createPrimaryKey();
@@ -155,7 +183,13 @@ public class ReverseSchemaMetaData {
 			addColumnToPk(tab, pk.getString("COLUMN_NAME"), primaryKey);
 			flag = true;
 		}
-		
+		try {
+			pk.close();
+			pk.getStatement().close();
+		}
+		catch(Exception e){
+			System.out.println("errore in chiusura cursore:"+e);
+		}
 		if(flag){
 			return primaryKey;
 		}
@@ -181,4 +215,5 @@ public class ReverseSchemaMetaData {
 		}
 		
 	}
+	
 }
