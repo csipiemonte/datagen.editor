@@ -66,8 +66,12 @@ public class PostgresReverser {
 						rs1 = dmd.getTables(null, rs.getString(1), "%", null);
 						while (rs1.next()) {
 							// add table or view to schema passing it tablename
-							addTableOrViewToSchema(rs1.getString(3), schema,
-									fact, dmd);
+							String tname = rs1.getString(3);
+							String ttype = rs1.getString(4);
+							if (!("INDEX".equalsIgnoreCase(ttype))){
+								addTableOrViewToSchema(tname, schema,
+										fact, dmd);
+							}
 						}
 					}
 				}
