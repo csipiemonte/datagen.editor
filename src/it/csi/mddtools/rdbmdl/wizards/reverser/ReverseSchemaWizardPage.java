@@ -1,5 +1,8 @@
 package it.csi.mddtools.rdbmdl.wizards.reverser;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +41,7 @@ public class ReverseSchemaWizardPage extends WizardPage {
 	
 	private Text jdbcUrl;
 
-	private Text schemaNameText;
+	private Combo schemaNameCombo;
 	
 	private ISelection selection;
 	
@@ -107,7 +110,7 @@ public class ReverseSchemaWizardPage extends WizardPage {
 		dbmsType = new Combo(container, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		dbmsType.setLayoutData(gd);
-		dbmsType.setItems(new String[]{"ORACLE", "POSTGRESQL"});
+		dbmsType.setItems(new String[]{ORACLE_DBMS_TYPE, POSTGRES_DBMS_TYPE});
 		dbmsType.addSelectionListener(new SelectionListener() {
 			
 			public void widgetSelected(SelectionEvent e) {
@@ -176,13 +179,37 @@ public class ReverseSchemaWizardPage extends WizardPage {
 		label.setText("");
 		
 		label = new Label(container, SWT.NULL);
+		label.setText("&Connect and load schemas");
+		
+		Button connectBtn = new Button(container, SWT.NULL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		connectBtn.setLayoutData(gd);
+		connectBtn.setText("Connect!");
+		connectBtn.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try{
+					connectAndFill();
+				}
+				catch(SQLException se){
+					updateStatus("Connection error:"+se);
+				}
+				
+			}
+
+		});
+		
+		
+		label = new Label(container, SWT.NULL);
+		label.setText("");
+		
+		label = new Label(container, SWT.NULL);
 		label.setText("&Schema name:");
 
-		schemaNameText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		schemaNameCombo = new Combo(container, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		schemaNameText.setLayoutData(gd);
-		schemaNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		schemaNameCombo.setLayoutData(gd);
+		schemaNameCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				dialogChanged();
 			}
 		});
@@ -193,6 +220,27 @@ public class ReverseSchemaWizardPage extends WizardPage {
 		setControl(container);
 	}
 
+	public final static String ORACLE_DBMS_TYPE = "ORACLE";
+	public final static String POSTGRES_DBMS_TYPE = "POSTGRES";
+	
+	void connectAndFill()throws SQLException{
+		String dbmsTypeName = getDbmsType();
+		AbstractReverser reverser = null;
+		if (dbmsTypeName != null){
+			if(dbmsTypeName.equals(ORACLE_DBMS_TYPE)){
+				reverser = new OracleReverser();
+			}
+			else if(dbmsTypeName.equals(POSTGRES_DBMS_TYPE)){
+				reverser = new PostgresReverser();
+			} 
+			if (reverser != null){
+				schemaNameCombo.setItems(reverser.getAllSchemaNames(getJdbcUrl(), getUsernameText(), getPasswordText()));			
+			}
+			dialogChanged();
+		}
+	
+	}
+	
 	/**
 	 * Tests if the current workbench selection is a suitable container to use.
 	 */
@@ -279,7 +327,7 @@ public class ReverseSchemaWizardPage extends WizardPage {
 			updateStatus("JDBC connection url must be specified");
 			return;
 		}
-		if (getSchemaName().length() == 0) {
+		if (schemaNameCombo.getItemCount()>0 && getSchemaName().length() == 0) {
 			updateStatus("Schema name must be specified");
 			return;
 		}
@@ -317,7 +365,10 @@ public class ReverseSchemaWizardPage extends WizardPage {
 	}
 
 	public String getSchemaName() {
-		return schemaNameText.getText();
+		if (schemaNameCombo.getSelectionIndex()!=-1)
+			return schemaNameCombo.getItem(schemaNameCombo.getSelectionIndex());
+		else
+			return "";
 	}
 
 	public String getUsernameText() {

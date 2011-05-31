@@ -5,6 +5,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 //import oracle.jdbc.OracleDatabaseMetaData;
@@ -22,6 +24,48 @@ public abstract class AbstractReverser {
 
 
 	public abstract Connection getConnection(String jdbcUrl, String username, String password) throws SQLException;
+	
+	public String[] getAllSchemaNames(String jdbcUrl, String username, String password) throws SQLException{
+		Connection conn = getConnection(jdbcUrl, username, password);
+		ResultSet schemaRS = null;
+		if (conn != null){
+			try{
+				DatabaseMetaData dmd = conn.getMetaData();
+				schemaRS = dmd.getSchemas();
+				ArrayList<String> ris = new ArrayList<String>();
+				while(schemaRS.next()){
+					ris.add(schemaRS.getString(1));
+				}
+				String [] risArr = new String[ris.size()];
+				Iterator<String> it = ris.iterator();
+				int i=0;
+				while (it.hasNext()) {
+					String s = it.next();
+					risArr[i++]=s;
+				}
+				return risArr;
+			}
+			catch(SQLException se){
+				throw se;
+			}
+			finally{
+				try{
+					if (schemaRS != null){
+						schemaRS.close();
+						if (schemaRS.getStatement()!=null)
+							schemaRS.getStatement().close();
+					}
+					if (conn!=null)
+						conn.close();
+				}
+				catch(Exception ce){
+					System.out.println("errore in chiusura cursori:"+ce);
+				} 
+			}
+		}
+		else
+			return null;
+	}
 	
 	
 	/**
