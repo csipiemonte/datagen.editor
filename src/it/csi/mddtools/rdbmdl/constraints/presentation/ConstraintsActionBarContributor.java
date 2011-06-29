@@ -1,5 +1,5 @@
 /**
- * <copyright>
+ * <copyright>(C) Copyright 2011 CSI-PIEMONTE
  * </copyright>
  *
  * $Id$
