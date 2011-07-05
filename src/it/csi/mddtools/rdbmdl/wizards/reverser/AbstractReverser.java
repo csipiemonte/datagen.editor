@@ -180,17 +180,18 @@ public abstract class AbstractReverser {
 	 */
 	private void addTableOrViewToSchema(String tableName, Schema schema,
 			RdbmdlFactory fact, DatabaseMetaData dmd) throws SQLException {
-
+		String ucTableName = tableName.toUpperCase();
 		Table tab = fact.createTable();
-		tab.setName(tableName);
-		tab.setUid("tb_"+tableName);
+		tab.setName(ucTableName);
+		tab.setUid("tb_"+ucTableName);
 		
 		ResultSet rsColumns = dmd.getColumns(null, null, tableName, null);
 		while (rsColumns.next()) {
+			String ucColumnName = rsColumns.getString("COLUMN_NAME").toUpperCase();
 			TableColumn col = fact.createTableColumn();
-			col.setName(rsColumns.getString("COLUMN_NAME"));
+			col.setName(ucColumnName);
 		    col.setType(setPrimitiveDataType(rsColumns));
-		    col.setUid("col_"+tableName+"_"+rsColumns.getString("COLUMN_NAME"));
+		    col.setUid("col_"+ucTableName+"_"+ucColumnName);
 
 			tab.getColumns().add(col);
 		}
@@ -236,10 +237,10 @@ public abstract class AbstractReverser {
 	 */
 	private PrimaryKey createPrimaryKey(DatabaseMetaData dmd,
 			String tableName, Table tab) throws SQLException {
-		
+		String ucTableName = tableName.toUpperCase();
 		PrimaryKey primaryKey = ConstraintsFactory.eINSTANCE.createPrimaryKey();
-		primaryKey.setUid("pk_"+tableName);
-		primaryKey.setName("pk_"+tableName);
+		primaryKey.setUid("pk_"+ucTableName);
+		primaryKey.setName("pk_"+ucTableName);
 		
 		boolean flag = false;
 		ResultSet pk = dmd.getPrimaryKeys(null, null, tableName);
@@ -264,11 +265,10 @@ public abstract class AbstractReverser {
 	/**
 	 * add column to PrimaryKey object
 	 * @param tab
-	 * @param columnName
+	 * @param columnName (non ancora maiuscolizzata)
 	 * @param primaryKey
 	 */
 	private void addColumnToPk(Table tab, String columnName, PrimaryKey primaryKey) {
-		
 		List<TableColumn> listaColonne = tab.getColumns();
 		for (TableColumn tableColumn : listaColonne) {
 			if(tableColumn.getName().equalsIgnoreCase(columnName)){
