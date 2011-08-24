@@ -127,12 +127,12 @@ public abstract class AbstractReverser {
 					// load only referenced schema
 					if (rs.getString(1).equalsIgnoreCase(schemaName)) {
 
-						rs1 = dmd.getTables(null, rs.getString(1), "%", null);
+						rs1 = dmd.getTables(null, rs.getString(1), "%", new String[]{"TABLE","SYNONYM"});
 						while (rs1.next()) {
 							// add table or view to schema passing it tablename
 							String tname = rs1.getString(3);
 							String ttype = rs1.getString(4);
-							if ("TABLE".equalsIgnoreCase(ttype)){
+							if ("TABLE".equalsIgnoreCase(ttype)||"SYNONYM".equalsIgnoreCase(ttype)){
 								addTableOrViewToSchema(tname, schema,
 										fact, dmd);
 							}
@@ -185,7 +185,7 @@ public abstract class AbstractReverser {
 		tab.setName(ucTableName);
 		tab.setUid("tb_"+ucTableName);
 		
-		ResultSet rsColumns = dmd.getColumns(null, null, tableName, null);
+		ResultSet rsColumns = dmd.getColumns(null, "%", tableName, "%");
 		while (rsColumns.next()) {
 			String ucColumnName = rsColumns.getString("COLUMN_NAME").toUpperCase();
 			TableColumn col = fact.createTableColumn();
