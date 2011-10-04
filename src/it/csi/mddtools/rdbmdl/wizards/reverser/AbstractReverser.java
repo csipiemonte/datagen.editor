@@ -20,25 +20,29 @@
  */
 package it.csi.mddtools.rdbmdl.wizards.reverser;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-//import oracle.jdbc.OracleDatabaseMetaData;
 import it.csi.mddtools.rdbmdl.RdbmdlFactory;
 import it.csi.mddtools.rdbmdl.Schema;
+import it.csi.mddtools.rdbmdl.SchemaElement;
 import it.csi.mddtools.rdbmdl.Table;
 import it.csi.mddtools.rdbmdl.TableColumn;
 import it.csi.mddtools.rdbmdl.constraints.ConstraintsFactory;
+import it.csi.mddtools.rdbmdl.constraints.ForeignKey;
+import it.csi.mddtools.rdbmdl.constraints.ForeignKeyComposer;
 import it.csi.mddtools.rdbmdl.constraints.PrimaryKey;
+import it.csi.mddtools.rdbmdl.constraints.UniqueConstraint;
 import it.csi.mddtools.rdbmdl.datatypes.DatatypesFactory;
 import it.csi.mddtools.rdbmdl.datatypes.PrimitiveDataType;
 import it.csi.mddtools.rdbmdl.datatypes.PrimitiveTypeCodes;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractReverser {
 
@@ -122,7 +126,7 @@ public abstract class AbstractReverser {
 				// get all schemas from db
 				ResultSet rs = dmd.getSchemas();
 				ResultSet rs1 = null;
-				int i = 0;
+				
 				while (rs.next()) {
 					// load only referenced schema
 					if (rs.getString(1).equalsIgnoreCase(schemaName)) {
@@ -153,6 +157,67 @@ public abstract class AbstractReverser {
 				catch(Exception ce){
 					// NOP
 				}
+				
+				
+				//dopo aver creato lo schema e averlo popolato con tabelle, colonne, PKs
+				//si possono creare le foreign key
+				
+				for(int i=0;i<schema.getElements().size();i++){
+					
+					if(schema.getElements().get(i) instanceof Table){
+						Table t = (Table) schema.getElements().get(i);
+						
+						ResultSet foreignKeySet = dmd.getImportedKeys(null, schema.getName(), t.getName());
+						
+						HashMap<String, ForeignKeyComposer> foreignKeyMap = new HashMap<String, ForeignKeyComposer>();;
+						//trovo le foreign keys associate all'i-esima tabella e le raggruppo nella hashmap 
+						//in base al nome della FK trovata.
+						try {
+							foreignKeyMap = searchForeignKeys(foreignKeySet);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						
+					    //ciclo sulla mappa creata per ottenere l'oggetto ForeignKey da settare nel modello
+						
+					   Iterator it = foreignKeyMap.keySet().iterator();
+					   while(it.hasNext()){
+						   
+						   String key = (String)it.next();
+						   ForeignKeyComposer foreignKeyComposer = (ForeignKeyComposer)foreignKeyMap.get(key);
+						   
+						   //istanzio la foreignKey
+						  ForeignKey foreignKey =  ConstraintsFactory.eINSTANCE.createForeignKey();
+						  	foreignKey.setName("fk_"+key); 
+						  	foreignKey.setUid("fk_"+foreignKey.getName());
+						   //cerco la tabella foreignKey da passare alla create
+						  Table tab = searchTable(schema, foreignKeyComposer.getFkTableName());
+						 
+						  if(tab!=null){
+						   //dalla tabella appena restituita ciclo per trovare le colonne in esame e le dichiaro foreign key nel modello
+							List<TableColumn> listTableColumn = tab.getColumns();
+							
+							setIncludedColumns(foreignKey,foreignKeyComposer,listTableColumn);
+							   
+						  //cerco la tabella corrispondente alla PKTABLENAME   
+						  Table tabPk = searchTable(schema, foreignKeyComposer.getPkTableName());
+						  
+						  PrimaryKey pk = tabPk.getPrimaryKey();					  
+						  	foreignKey.setReferredUC(pk);
+						  
+						  //
+						  tab.getForeignKeys().add(foreignKey);
+						   
+						   } 
+						  
+					   }
+					   
+					   
+					}
+				}
+				
+				
+				
 			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException();
@@ -169,6 +234,86 @@ public abstract class AbstractReverser {
 
 		return schema;
 	}
+
+	
+	
+	private void setIncludedColumns(ForeignKey foreignKey,ForeignKeyComposer foreignKeyComposer,
+			List<TableColumn> listTableColumn) {
+		
+		for(int q =0; q<foreignKeyComposer.getFkColumnNames().size();q++){
+			for(int yy=0;yy<listTableColumn.size();yy++){
+				if(listTableColumn.get(yy).getName().equals(foreignKeyComposer.getFkColumnNames().get(q))){
+					listTableColumn.get(yy).setIsForeignKey(true);
+					foreignKey.getIncludedColumns().add(listTableColumn.get(yy));
+					
+				}
+			}
+		}	
+	}
+
+	
+	private HashMap<String, ForeignKeyComposer> searchForeignKeys (
+			ResultSet foreignKeySet) throws Exception{
+		
+	HashMap<String, ForeignKeyComposer> foreignKeyMap = new HashMap<String, ForeignKeyComposer>();
+		
+	while(foreignKeySet.next()){
+			
+	    	String	 fkTableName  = foreignKeySet.getString("FKTABLE_NAME");
+	    	String   pkTableName  = foreignKeySet.getString("PKTABLE_NAME");
+	    	String   fkName       = foreignKeySet.getString("FK_NAME");
+	    	String   fkColumnName = foreignKeySet.getString("FKCOLUMN_NAME"); 
+	    	String   pkColumnName = foreignKeySet.getString("PKCOLUMN_NAME");
+		    
+		    if(foreignKeyMap.containsKey(fkName)){
+		    	ForeignKeyComposer fcComposer= foreignKeyMap.get(fkName);
+		    	fcComposer.getPksColumNames().add(pkColumnName);
+		    	fcComposer.getFkColumnNames().add(fkColumnName);
+		    	foreignKeyMap.put(fkName,fcComposer);
+		    
+		    }
+		    else
+		    {
+		    	ForeignKeyComposer fkc = new ForeignKeyComposer();
+		    	//lista delle FK e delle PK associate
+		    	List<String> pkColumnNames= new ArrayList<String>();
+		    	List<String> fkColumnNames= new ArrayList<String>();
+		    	fkColumnNames.add(fkColumnName);
+		    	pkColumnNames.add(pkColumnName);
+		    	fkc.setFkColumnNames(fkColumnNames);
+		    	fkc.setPksColumNames(pkColumnNames);
+		    	//nomi delle tabelle
+		    	fkc.setFkTableName(fkTableName);
+		    	fkc.setPkTableName(pkTableName);
+		    	foreignKeyMap.put(fkName,fkc);
+		    }
+		    
+		  
+		}  
+	    try{
+	    	foreignKeySet.close();
+		}
+		catch(Exception ce){
+			// NOP
+		}
+		return foreignKeyMap;
+	}
+	
+
+	private Table searchTable(Schema schema, String tableName) {
+		
+		for(int i=0;i<schema.getElements().size();i++){
+			if(schema.getElements().get(i) instanceof Table ){
+				if(schema.getElements().get(i).getName().equals(tableName)){
+					return (Table)schema.getElements().get(i);
+				}
+					
+			}
+		}
+		return null;
+	}
+
+
 
 	/**
 	 * Add a table or a view to schema
@@ -279,5 +424,10 @@ public abstract class AbstractReverser {
 		}
 		
 	}
+	
+	
+
+		
+	
 	
 }
