@@ -27,7 +27,6 @@ import it.csi.mddtools.rdbmdl.Table;
 import it.csi.mddtools.rdbmdl.TableColumn;
 import it.csi.mddtools.rdbmdl.constraints.ConstraintsFactory;
 import it.csi.mddtools.rdbmdl.constraints.ForeignKey;
-import it.csi.mddtools.rdbmdl.constraints.ForeignKeyComposer;
 import it.csi.mddtools.rdbmdl.constraints.PrimaryKey;
 import it.csi.mddtools.rdbmdl.constraints.UniqueConstraint;
 import it.csi.mddtools.rdbmdl.datatypes.DatatypesFactory;
@@ -169,7 +168,7 @@ public abstract class AbstractReverser {
 						
 						ResultSet foreignKeySet = dmd.getImportedKeys(null, schema.getName(), t.getName());
 						
-						HashMap<String, ForeignKeyComposer> foreignKeyMap = new HashMap<String, ForeignKeyComposer>();;
+						HashMap<String, ForeignKeyStruct> foreignKeyMap = new HashMap<String, ForeignKeyStruct>();;
 						//trovo le foreign keys associate all'i-esima tabella e le raggruppo nella hashmap 
 						//in base al nome della FK trovata.
 						try {
@@ -184,7 +183,7 @@ public abstract class AbstractReverser {
 					   while(it.hasNext()){
 						   
 						   String key = (String)it.next();
-						   ForeignKeyComposer foreignKeyComposer = (ForeignKeyComposer)foreignKeyMap.get(key);
+						   ForeignKeyStruct foreignKeyComposer = (ForeignKeyStruct)foreignKeyMap.get(key);
 						   
 						   //istanzio la foreignKey
 						  ForeignKey foreignKey =  ConstraintsFactory.eINSTANCE.createForeignKey();
@@ -237,7 +236,7 @@ public abstract class AbstractReverser {
 
 	
 	
-	private void setIncludedColumns(ForeignKey foreignKey,ForeignKeyComposer foreignKeyComposer,
+	private void setIncludedColumns(ForeignKey foreignKey,ForeignKeyStruct foreignKeyComposer,
 			List<TableColumn> listTableColumn) {
 		
 		for(int q =0; q<foreignKeyComposer.getFkColumnNames().size();q++){
@@ -252,10 +251,10 @@ public abstract class AbstractReverser {
 	}
 
 	
-	private HashMap<String, ForeignKeyComposer> searchForeignKeys (
+	private HashMap<String, ForeignKeyStruct> searchForeignKeys (
 			ResultSet foreignKeySet) throws Exception{
 		
-	HashMap<String, ForeignKeyComposer> foreignKeyMap = new HashMap<String, ForeignKeyComposer>();
+	HashMap<String, ForeignKeyStruct> foreignKeyMap = new HashMap<String, ForeignKeyStruct>();
 		
 	while(foreignKeySet.next()){
 			
@@ -266,7 +265,7 @@ public abstract class AbstractReverser {
 	    	String   pkColumnName = foreignKeySet.getString("PKCOLUMN_NAME");
 		    
 		    if(foreignKeyMap.containsKey(fkName)){
-		    	ForeignKeyComposer fcComposer= foreignKeyMap.get(fkName);
+		    	ForeignKeyStruct fcComposer= foreignKeyMap.get(fkName);
 		    	fcComposer.getPksColumNames().add(pkColumnName);
 		    	fcComposer.getFkColumnNames().add(fkColumnName);
 		    	foreignKeyMap.put(fkName,fcComposer);
@@ -274,7 +273,7 @@ public abstract class AbstractReverser {
 		    }
 		    else
 		    {
-		    	ForeignKeyComposer fkc = new ForeignKeyComposer();
+		    	ForeignKeyStruct fkc = new ForeignKeyStruct();
 		    	//lista delle FK e delle PK associate
 		    	List<String> pkColumnNames= new ArrayList<String>();
 		    	List<String> fkColumnNames= new ArrayList<String>();
