@@ -336,6 +336,10 @@ public abstract class AbstractReverser {
 			col.setName(ucColumnName);
 		    col.setType(setPrimitiveDataType(rsColumns));
 		    col.setUid("col_"+ucTableName+"_"+ucColumnName);
+		    //STDMDD-926: per default si settano a false, i metodi invocati successivamente per la gestione delle FK
+		    //            e delle PK provvederanno a modificare a true queste property qualora sia il caso.
+		    col.setIsPrimaryKey(false);
+		    col.setIsForeignKey(false);
 
 			tab.getColumns().add(col);
 		}
