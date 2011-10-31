@@ -209,10 +209,10 @@ public class ReverseSchemaWizardPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				try{
 					connectAndFill();
+				}catch (Throwable t) {
+					updateStatus("Si e' verificato un errore generico di tipo : "+t.getClass() + " con messaggio: "+t.getMessage());
 				}
-				catch(SQLException se){
-					updateStatus("Connection error:"+se);
-				}
+				
 				
 			}
 
