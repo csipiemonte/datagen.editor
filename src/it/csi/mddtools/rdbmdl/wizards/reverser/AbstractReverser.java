@@ -329,7 +329,7 @@ public abstract class AbstractReverser {
 		tab.setName(ucTableName);
 		tab.setUid("tb_"+ucTableName);
 		
-		ResultSet rsColumns = dmd.getColumns(null, "%", tableName, "%");
+		ResultSet rsColumns = dmd.getColumns(null, schema.getName(), tableName, "%");
 		while (rsColumns.next()) {
 			String ucColumnName = rsColumns.getString("COLUMN_NAME").toUpperCase();
 			TableColumn col = fact.createTableColumn();
