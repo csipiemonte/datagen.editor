@@ -219,14 +219,14 @@ public abstract class AbstractReverser {
 				
 			}
 		} catch (SQLException e) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Errore SQL:"+e.getMessage());
 		} finally {
 			// Close connection
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException ex) {
-					throw new IllegalArgumentException();
+					throw new IllegalArgumentException("Errore SQL:"+ex.getMessage());
 				}
 			}
 		}
