@@ -145,7 +145,7 @@ public class ReverseSchemaWizardPage extends WizardPage {
 				if (ORACLE_DBMS_TYPE.equals(dbmsTypeName))
 					jdbcUrl.setText("jdbc:oracle:thin:@[server]:[port]:[sid]");
 				else if (POSTGRES_DBMS_TYPE.equals(dbmsTypeName))
-					jdbcUrl.setText(" jdbc:postgresql://[host]:[port]/[database]?user=[userName]&password=[pass]");
+					jdbcUrl.setText("jdbc:postgresql://[host]:[port]/[database]");
 			}
 		});
 		
