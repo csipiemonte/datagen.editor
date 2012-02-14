@@ -21,7 +21,9 @@
 package it.csi.mddtools.rdbmdl.wizards.reverser;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -40,4 +42,10 @@ public class PostgresReverser extends AbstractReverser{
 		return conn;
 	}
 	
+	@Override
+	public ResultSet getImportedKeysFromDMD(DatabaseMetaData dmd,
+			String schemaName, String tableName) throws SQLException {
+			ResultSet foreignKeySet = dmd.getImportedKeys(null, schemaName, tableName.toLowerCase());
+			return foreignKeySet;
+	}
 }

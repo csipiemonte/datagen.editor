@@ -90,6 +90,14 @@ public abstract class AbstractReverser {
 			return null;
 	}
 	
+	/**
+	 * 
+	 * @param dmd DatabaseMetadata JDBC
+	 * @param schemaName nome dello schema
+	 * @param tableName nome della tabella. Il case potrebbe essere significativo per differenti tipi di DBMS
+	 * @return
+	 */
+	public abstract ResultSet getImportedKeysFromDMD(DatabaseMetaData dmd, String schemaName, String tableName) throws SQLException;
 	
 	/**
 	 * Create a schema db from oracle metadata
@@ -166,7 +174,7 @@ public abstract class AbstractReverser {
 					if(schema.getElements().get(i) instanceof Table){
 						Table t = (Table) schema.getElements().get(i);
 						
-						ResultSet foreignKeySet = dmd.getImportedKeys(null, schema.getName(), t.getName());
+						ResultSet foreignKeySet = getImportedKeysFromDMD(dmd, schemaName, t.getName());
 						
 						HashMap<String, ForeignKeyStruct> foreignKeyMap = new HashMap<String, ForeignKeyStruct>();;
 						//trovo le foreign keys associate all'i-esima tabella e le raggruppo nella hashmap 
@@ -187,7 +195,7 @@ public abstract class AbstractReverser {
 						   
 						   //istanzio la foreignKey
 						  ForeignKey foreignKey =  ConstraintsFactory.eINSTANCE.createForeignKey();
-						  	foreignKey.setName("fk_"+key); 
+						  	foreignKey.setName(key); 
 						  	foreignKey.setUid("fk_"+foreignKey.getName());
 						   //cerco la tabella foreignKey da passare alla create
 						  Table tab = searchTable(schema, foreignKeyComposer.getFkTableName());
@@ -241,7 +249,7 @@ public abstract class AbstractReverser {
 		
 		for(int q =0; q<foreignKeyComposer.getFkColumnNames().size();q++){
 			for(int yy=0;yy<listTableColumn.size();yy++){
-				if(listTableColumn.get(yy).getName().equals(foreignKeyComposer.getFkColumnNames().get(q))){
+				if(listTableColumn.get(yy).getName().equalsIgnoreCase(foreignKeyComposer.getFkColumnNames().get(q))){
 					listTableColumn.get(yy).setIsForeignKey(true);
 					foreignKey.getIncludedColumns().add(listTableColumn.get(yy));
 					
@@ -303,7 +311,7 @@ public abstract class AbstractReverser {
 		
 		for(int i=0;i<schema.getElements().size();i++){
 			if(schema.getElements().get(i) instanceof Table ){
-				if(schema.getElements().get(i).getName().equals(tableName)){
+				if(schema.getElements().get(i).getName().equalsIgnoreCase(tableName)){
 					return (Table)schema.getElements().get(i);
 				}
 					
@@ -428,9 +436,5 @@ public abstract class AbstractReverser {
 		
 	}
 	
-	
 
-		
-	
-	
 }
