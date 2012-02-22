@@ -100,6 +100,16 @@ public abstract class AbstractReverser {
 	public abstract ResultSet getImportedKeysFromDMD(DatabaseMetaData dmd, String schemaName, String tableName) throws SQLException;
 	
 	/**
+	 * 
+	 * @param dmd
+	 * @param schemaName
+	 * @param tableName
+	 * @return
+	 * @throws SQLException
+	 */
+	public abstract ResultSet getColumnsFromDMD(DatabaseMetaData dmd, String schemaName, String tableName) throws SQLException;
+	
+	/**
 	 * Create a schema db from oracle metadata
 	 * @param fact
 	 * @param jdbcUrl
@@ -144,7 +154,7 @@ public abstract class AbstractReverser {
 							String tname = rs1.getString(3);
 							String ttype = rs1.getString(4);
 							if ("TABLE".equalsIgnoreCase(ttype)||"SYNONYM".equalsIgnoreCase(ttype)){
-								addTableOrViewToSchema(tname, schema,
+								addTableOrSynonymToSchema(tname, schema,
 										fact, dmd);
 							}
 						}
@@ -330,14 +340,14 @@ public abstract class AbstractReverser {
 	 * @param dmd
 	 * @throws SQLException
 	 */
-	private void addTableOrViewToSchema(String tableName, Schema schema,
+	private void addTableOrSynonymToSchema(String tableName, Schema schema,
 			RdbmdlFactory fact, DatabaseMetaData dmd) throws SQLException {
 		String ucTableName = tableName.toUpperCase();
 		Table tab = fact.createTable();
 		tab.setName(ucTableName);
 		tab.setUid("tb_"+ucTableName);
 		
-		ResultSet rsColumns = dmd.getColumns(null, schema.getName(), tableName, "%");
+		ResultSet rsColumns = getColumnsFromDMD(dmd, schema.getName(), tableName);
 		while (rsColumns.next()) {
 			String ucColumnName = rsColumns.getString("COLUMN_NAME").toUpperCase();
 			TableColumn col = fact.createTableColumn();

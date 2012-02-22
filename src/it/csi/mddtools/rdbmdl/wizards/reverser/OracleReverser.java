@@ -46,5 +46,11 @@ public class OracleReverser extends AbstractReverser{
 			ResultSet foreignKeySet = dmd.getImportedKeys(null, schemaName, tableName);
 			return foreignKeySet;
 	}
+
+	@Override
+	public ResultSet getColumnsFromDMD(DatabaseMetaData dmd, String schemaName,
+			String tableName) throws SQLException {// TODO Auto-generated method stub
+		return 	dmd.getColumns(null, "%", tableName, "%");
+	}
 	
 }
