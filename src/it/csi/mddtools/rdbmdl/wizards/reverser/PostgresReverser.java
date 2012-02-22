@@ -48,4 +48,10 @@ public class PostgresReverser extends AbstractReverser{
 			ResultSet foreignKeySet = dmd.getImportedKeys(null, schemaName, tableName.toLowerCase());
 			return foreignKeySet;
 	}
+	
+	@Override
+	public ResultSet getColumnsFromDMD(DatabaseMetaData dmd, String schemaName,
+			String tableName) throws SQLException {// TODO Auto-generated method stub
+		return 	dmd.getColumns(null, schemaName, tableName, "%");
+	}
 }
