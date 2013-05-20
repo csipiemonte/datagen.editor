@@ -350,6 +350,7 @@ public abstract class AbstractReverser {
 		ResultSet rsColumns = getColumnsFromDMD(dmd, schema.getName(), tableName);
 		while (rsColumns.next()) {
 			String ucColumnName = rsColumns.getString("COLUMN_NAME").toUpperCase();
+			if (!tableAlreadyContainsColumn(tab, ucColumnName)){
 			TableColumn col = fact.createTableColumn();
 			col.setName(ucColumnName);
 		    col.setType(setPrimitiveDataType(rsColumns));
@@ -360,6 +361,7 @@ public abstract class AbstractReverser {
 		    col.setIsForeignKey(false);
 
 			tab.getColumns().add(col);
+			}
 		}
 		try{
 			rsColumns.close();
@@ -377,6 +379,17 @@ public abstract class AbstractReverser {
 
 	}
 
+	private boolean tableAlreadyContainsColumn(Table t, String colName){
+		Iterator<TableColumn> colIter = t.getColumns().iterator();
+		while(colIter.hasNext()){
+			TableColumn currCol = colIter.next();
+			if (currCol.getName().equalsIgnoreCase(colName))
+				return true;
+			
+		}
+		return false;
+	}
+	
 	/**
 	 * get the primitive data type for current column
 	 * @param rsColumns
