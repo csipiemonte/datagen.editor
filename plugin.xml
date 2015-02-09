@@ -81,4 +81,124 @@
       </editor>
    </extension>
 
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated rdbmdl -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="it.csi.mddtools.rdbmdl.presentation.RdbmdlModelWizardID"
+            name="%_UI_RdbmdlModelWizard_label"
+            class="it.csi.mddtools.rdbmdl.presentation.RdbmdlModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/RdbmdlModelFile.gif">
+         <description>%_UI_RdbmdlModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated datagen -->
+      <editor
+            id="it.csi.mddtools.datagen.presentation.DatagenEditorID"
+            name="%_UI_DatagenEditor_label"
+            icon="icons/full/obj16/DatagenModelFile.gif"
+            extensions="datagen"
+            class="it.csi.mddtools.datagen.presentation.DatagenEditor"
+            contributorClass="it.csi.mddtools.datagen.presentation.DatagenActionBarContributor">
+      </editor>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated rdbmdl -->
+      <editor
+            id="it.csi.mddtools.rdbmdl.view.presentation.ViewEditorID"
+            name="%_UI_ViewEditor_label"
+            icon="icons/full/obj16/ViewModelFile.gif"
+            extensions="view"
+            class="it.csi.mddtools.rdbmdl.view.presentation.ViewEditor"
+            contributorClass="it.csi.mddtools.rdbmdl.view.presentation.ViewActionBarContributor">
+      </editor>
+   </extension>
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated rdbmdl -->
+      <editor
+            id="it.csi.mddtools.rdbmdl.datatypes.presentation.DatatypesEditorID"
+            name="%_UI_DatatypesEditor_label"
+            icon="icons/full/obj16/DatatypesModelFile.gif"
+            extensions="datatypes"
+            class="it.csi.mddtools.rdbmdl.datatypes.presentation.DatatypesEditor"
+            contributorClass="it.csi.mddtools.rdbmdl.datatypes.presentation.DatatypesActionBarContributor">
+      </editor>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated rdbmdl -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="it.csi.mddtools.rdbmdl.view.presentation.ViewModelWizardID"
+            name="%_UI_ViewModelWizard_label"
+            class="it.csi.mddtools.rdbmdl.view.presentation.ViewModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/ViewModelFile.gif">
+         <description>%_UI_ViewModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated rdbmdl -->
+      <editor
+            id="it.csi.mddtools.rdbmdl.constraints.presentation.ConstraintsEditorID"
+            name="%_UI_ConstraintsEditor_label"
+            icon="icons/full/obj16/ConstraintsModelFile.gif"
+            extensions="constraints"
+            class="it.csi.mddtools.rdbmdl.constraints.presentation.ConstraintsEditor"
+            contributorClass="it.csi.mddtools.rdbmdl.constraints.presentation.ConstraintsActionBarContributor">
+      </editor>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated rdbmdl -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="it.csi.mddtools.rdbmdl.datatypes.presentation.DatatypesModelWizardID"
+            name="%_UI_DatatypesModelWizard_label"
+            class="it.csi.mddtools.rdbmdl.datatypes.presentation.DatatypesModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/DatatypesModelFile.gif">
+         <description>%_UI_DatatypesModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated rdbmdl -->
+      <editor
+            id="it.csi.mddtools.rdbmdl.presentation.RdbmdlEditorID"
+            name="%_UI_RdbmdlEditor_label"
+            icon="icons/full/obj16/RdbmdlModelFile.gif"
+            extensions="rdbmdl"
+            class="it.csi.mddtools.rdbmdl.presentation.RdbmdlEditor"
+            contributorClass="it.csi.mddtools.rdbmdl.presentation.RdbmdlActionBarContributor">
+      </editor>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated rdbmdl -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="it.csi.mddtools.rdbmdl.constraints.presentation.ConstraintsModelWizardID"
+            name="%_UI_ConstraintsModelWizard_label"
+            class="it.csi.mddtools.rdbmdl.constraints.presentation.ConstraintsModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/ConstraintsModelFile.gif">
+         <description>%_UI_ConstraintsModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
 </plugin>
